@@ -47,31 +47,50 @@ function UserMenu() {
 
   return (
     <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
-      <DropdownMenuTrigger>
-        <Avatar className="cursor-pointer size-9">
-          <AvatarImage alt={user.name || ''} />
-          <AvatarFallback>
-            {user.email
-              .split(' ')
-              .map((n) => n[0])
-              .join('')}
-          </AvatarFallback>
-        </Avatar>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          className="cursor-pointer size-9 rounded-full p-0"
+          aria-label={`${user.name || user.email} user menu`}
+          aria-expanded={isMenuOpen}
+        >
+          <Avatar className="size-9">
+            <AvatarImage alt={`Profile picture for ${user.name || user.email}`} />
+            <AvatarFallback>
+              {user.email
+                .split(' ')
+                .map((n) => n[0])
+                .join('')
+                .toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+        </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="flex flex-col gap-1">
-        <DropdownMenuItem className="cursor-pointer">
-          <Link href="/dashboard" className="flex w-full items-center">
+      <DropdownMenuContent align="end" className="w-56">
+        <div className="flex items-center justify-start px-2 py-3">
+          <div className="flex flex-col space-y-1 leading-none">
+            {user.name && (
+              <p className="font-medium">{user.name}</p>
+            )}
+            <p className="w-[200px] truncate text-xs text-muted-foreground">
+              {user.email}
+            </p>
+          </div>
+        </div>
+        <div className="border-t border-gray-200"></div>
+        <DropdownMenuItem asChild>
+          <Link href="/dashboard" className="cursor-pointer">
             <Home className="mr-2 h-4 w-4" />
             <span>Dashboard</span>
           </Link>
         </DropdownMenuItem>
         <form action={handleSignOut} className="w-full">
-          <button type="submit" className="flex w-full">
-            <DropdownMenuItem className="w-full flex-1 cursor-pointer">
+          <DropdownMenuItem asChild>
+            <button type="submit" className="w-full cursor-pointer text-left">
               <LogOut className="mr-2 h-4 w-4" />
               <span>Sign out</span>
-            </DropdownMenuItem>
-          </button>
+            </button>
+          </DropdownMenuItem>
         </form>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -80,17 +99,21 @@ function UserMenu() {
 
 function Header() {
   return (
-    <header className="border-b border-gray-200">
+    <header className="border-b border-gray-200" role="banner">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-        <Link href="/" className="flex items-center">
-          <CircleIcon className="h-6 w-6 text-orange-500" />
+        <Link 
+          href="/" 
+          className="flex items-center focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-sm"
+          aria-label="ACME home"
+        >
+          <CircleIcon className="h-6 w-6 text-orange-500" aria-hidden="true" />
           <span className="ml-2 text-xl font-semibold text-gray-900">ACME</span>
         </Link>
-        <div className="flex items-center space-x-4">
+        <nav className="flex items-center space-x-4" role="navigation" aria-label="User navigation">
           <Suspense fallback={<div className="h-9" />}>
             <UserMenu />
           </Suspense>
-        </div>
+        </nav>
       </div>
     </header>
   );

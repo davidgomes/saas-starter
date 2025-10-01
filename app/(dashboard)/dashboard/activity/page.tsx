@@ -72,8 +72,8 @@ export default async function ActivityPage() {
   const logs = await getActivityLogs();
 
   return (
-    <section className="flex-1 p-4 lg:p-8">
-      <h1 className="text-lg lg:text-2xl font-medium text-gray-900 mb-6">
+    <section className="flex-1 p-4 lg:p-8" aria-labelledby="activity-page-title">
+      <h1 id="activity-page-title" className="text-lg lg:text-2xl font-medium text-gray-900 mb-6">
         Activity Log
       </h1>
       <Card>
@@ -82,37 +82,46 @@ export default async function ActivityPage() {
         </CardHeader>
         <CardContent>
           {logs.length > 0 ? (
-            <ul className="space-y-4">
-              {logs.map((log) => {
-                const Icon = iconMap[log.action as ActivityType] || Settings;
-                const formattedAction = formatAction(
-                  log.action as ActivityType
-                );
+            <>
+              <div className="sr-only">
+                Found {logs.length} activity entries
+              </div>
+              <ul className="space-y-4" role="list" aria-label={`${logs.length} recent activities`}>
+                {logs.map((log) => {
+                  const Icon = iconMap[log.action as ActivityType] || Settings;
+                  const formattedAction = formatAction(
+                    log.action as ActivityType
+                  );
 
-                return (
-                  <li key={log.id} className="flex items-center space-x-4">
-                    <div className="bg-orange-100 rounded-full p-2">
-                      <Icon className="w-5 h-5 text-orange-600" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-gray-900">
-                        {formattedAction}
-                        {log.ipAddress && ` from IP ${log.ipAddress}`}
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        {getRelativeTime(new Date(log.timestamp))}
-                      </p>
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
+                  return (
+                    <li key={log.id} className="flex items-center space-x-4">
+                      <div className="bg-orange-100 rounded-full p-2" aria-hidden="true">
+                        <Icon className="w-5 h-5 text-orange-600" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-gray-900">
+                          {formattedAction}
+                          {log.ipAddress && ` from IP ${log.ipAddress}`}
+                        </p>
+                        <p className="text-xs text-gray-500" aria-label={`Time: ${getRelativeTime(new Date(log.timestamp))}`}>
+                          {getRelativeTime(new Date(log.timestamp))}
+                        </p>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            </>
           ) : (
-            <div className="flex flex-col items-center justify-center text-center py-12">
-              <AlertCircle className="h-12 w-12 text-orange-500 mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <div 
+              className="flex flex-col items-center justify-center text-center py-12"
+              role="region"
+              aria-label="No activity yet"
+            >
+              <AlertCircle className="h-12 w-12 text-orange-500 mb-4" aria-hidden="true" />
+              <h2 className="text-lg font-semibold text-gray-900 mb-2">
                 No activity yet
-              </h3>
+              </h2>
               <p className="text-sm text-gray-500 max-w-sm">
                 When you perform actions like signing in or updating your
                 account, they'll appear here.
