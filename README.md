@@ -1,30 +1,30 @@
-# Next.js SaaS Starter
+# Next.js SaaSスターター
 
-This is a starter template for building a SaaS application using **Next.js** with support for authentication, Stripe integration for payments, and a dashboard for logged-in users.
+これは、認証、決済のための Stripe 連携、ログインユーザー向けダッシュボードに対応した、**Next.js** を用いた SaaS アプリケーション構築用スターターテンプレートです。
 
-**Demo: [https://next-saas-start.vercel.app/](https://next-saas-start.vercel.app/)**
+**デモ: [https://next-saas-start.vercel.app/](https://next-saas-start.vercel.app/)**
 
-## Features
+## 機能
 
-- Marketing landing page (`/`) with animated Terminal element
-- Pricing page (`/pricing`) which connects to Stripe Checkout
-- Dashboard pages with CRUD operations on users/teams
-- Basic RBAC with Owner and Member roles
-- Subscription management with Stripe Customer Portal
-- Email/password authentication with JWTs stored to cookies
-- Global middleware to protect logged-in routes
-- Local middleware to protect Server Actions or validate Zod schemas
-- Activity logging system for any user events
+- アニメーションするターミナル要素を備えたマーケティング用ランディングページ（`/`）
+- Stripe Checkout と連携する料金ページ（`/pricing`）
+- ユーザー/チームに対する CRUD 操作を備えたダッシュボード
+- Owner と Member ロールによる基本的な RBAC
+- Stripe Customer Portal によるサブスクリプション管理
+- Cookie に保存された JWT を用いたメール/パスワード認証
+- ログイン必須ルートを保護するグローバルミドルウェア
+- Server Actions の保護や Zod スキーマ検証を行うローカルミドルウェア
+- ユーザーイベントの活動ログシステム
 
-## Tech Stack
+## 技術スタック
 
-- **Framework**: [Next.js](https://nextjs.org/)
-- **Database**: [Postgres](https://www.postgresql.org/)
+- **フレームワーク**: [Next.js](https://nextjs.org/)
+- **データベース**: [Postgres](https://www.postgresql.org/)
 - **ORM**: [Drizzle](https://orm.drizzle.team/)
-- **Payments**: [Stripe](https://stripe.com/)
-- **UI Library**: [shadcn/ui](https://ui.shadcn.com/)
+- **決済**: [Stripe](https://stripe.com/)
+- **UI ライブラリ**: [shadcn/ui](https://ui.shadcn.com/)
 
-## Getting Started
+## はじめに
 
 ```bash
 git clone https://github.com/nextjs/saas-starter
@@ -32,85 +32,85 @@ cd saas-starter
 pnpm install
 ```
 
-## Running Locally
+## ローカルでの実行
 
-[Install](https://docs.stripe.com/stripe-cli) and log in to your Stripe account:
+[インストール](https://docs.stripe.com/stripe-cli) して Stripe アカウントにログインします:
 
 ```bash
 stripe login
 ```
 
-Use the included setup script to create your `.env` file:
+同梱のセットアップスクリプトで `.env` ファイルを作成します:
 
 ```bash
 pnpm db:setup
 ```
 
-Run the database migrations and seed the database with a default user and team:
+データベースマイグレーションを実行し、初期ユーザーとチームでシードします:
 
 ```bash
 pnpm db:migrate
 pnpm db:seed
 ```
 
-This will create the following user and team:
+次のユーザーとチームが作成されます:
 
-- User: `test@test.com`
-- Password: `admin123`
+- ユーザー: `test@test.com`
+- パスワード: `admin123`
 
-You can also create new users through the `/sign-up` route.
+`/sign-up` ルートから新規ユーザーを作成することもできます。
 
-Finally, run the Next.js development server:
+最後に、Next.js の開発サーバーを起動します:
 
 ```bash
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser to see the app in action.
+ブラウザで [http://localhost:3000](http://localhost:3000) を開くとアプリを確認できます。
 
-You can listen for Stripe webhooks locally through their CLI to handle subscription change events:
+Stripe CLI を使ってローカルで Webhook を待ち受け、サブスクリプション変更イベントを処理できます:
 
 ```bash
 stripe listen --forward-to localhost:3000/api/stripe/webhook
 ```
 
-## Testing Payments
+## 決済のテスト
 
-To test Stripe payments, use the following test card details:
+Stripe 決済をテストするには、次のテストカード情報を使用します:
 
-- Card Number: `4242 4242 4242 4242`
-- Expiration: Any future date
-- CVC: Any 3-digit number
+- カード番号: `4242 4242 4242 4242`
+- 有効期限: 将来の日付なら任意
+- CVC: 任意の 3 桁
 
-## Going to Production
+## 本番環境へ
 
-When you're ready to deploy your SaaS application to production, follow these steps:
+本番へデプロイする準備ができたら、次の手順に従ってください:
 
-### Set up a production Stripe webhook
+### 本番用の Stripe Webhook を設定する
 
-1. Go to the Stripe Dashboard and create a new webhook for your production environment.
-2. Set the endpoint URL to your production API route (e.g., `https://yourdomain.com/api/stripe/webhook`).
-3. Select the events you want to listen for (e.g., `checkout.session.completed`, `customer.subscription.updated`).
+1. Stripe ダッシュボードで本番環境用の Webhook を作成します。
+2. エンドポイント URL を本番の API ルートに設定します（例: `https://yourdomain.com/api/stripe/webhook`）。
+3. 待ち受けたいイベントを選択します（例: `checkout.session.completed`, `customer.subscription.updated`）。
 
-### Deploy to Vercel
+### Vercel にデプロイ
 
-1. Push your code to a GitHub repository.
-2. Connect your repository to [Vercel](https://vercel.com/) and deploy it.
-3. Follow the Vercel deployment process, which will guide you through setting up your project.
+1. コードを GitHub リポジトリにプッシュします。
+2. リポジトリを [Vercel](https://vercel.com/) に接続してデプロイします。
+3. Vercel のデプロイ手順に従い、プロジェクトのセットアップを完了します。
 
-### Add environment variables
+### 環境変数を追加
 
-In your Vercel project settings (or during deployment), add all the necessary environment variables. Make sure to update the values for the production environment, including:
+Vercel のプロジェクト設定（またはデプロイ時）で必要な環境変数を追加します。本番環境用の値に更新してください。例:
 
-1. `BASE_URL`: Set this to your production domain.
-2. `STRIPE_SECRET_KEY`: Use your Stripe secret key for the production environment.
-3. `STRIPE_WEBHOOK_SECRET`: Use the webhook secret from the production webhook you created in step 1.
-4. `POSTGRES_URL`: Set this to your production database URL.
-5. `AUTH_SECRET`: Set this to a random string. `openssl rand -base64 32` will generate one.
+1. `BASE_URL`: 本番ドメインを設定
+2. `STRIPE_SECRET_KEY`: 本番用の Stripe シークレットキー
+3. `STRIPE_WEBHOOK_SECRET`: 手順 1 で作成した本番 Webhook のシークレット
+4. `POSTGRES_URL`: 本番データベースの URL
+5. `AUTH_SECRET`: ランダムな文字列を設定（`openssl rand -base64 32` で生成可能）
 
-## Other Templates
+## 他のテンプレート
 
-While this template is intentionally minimal and to be used as a learning resource, there are other paid versions in the community which are more full-featured:
+このテンプレートは学習用に最小限ですが、より多機能な有料版もあります:
 
 - https://achromatic.dev
 - https://shipfa.st
