@@ -1,30 +1,30 @@
-# Next.js SaaS Starter
+# Modèle de Démarrage SaaS Next.js
 
-This is a starter template for building a SaaS application using **Next.js** with support for authentication, Stripe integration for payments, and a dashboard for logged-in users.
+Ceci est un modèle de démarrage pour créer une application SaaS en utilisant **Next.js** avec support pour l'authentification, l'intégration Stripe pour les paiements, et un tableau de bord pour les utilisateurs connectés.
 
-**Demo: [https://next-saas-start.vercel.app/](https://next-saas-start.vercel.app/)**
+**Démo : [https://next-saas-start.vercel.app/](https://next-saas-start.vercel.app/)**
 
-## Features
+## Fonctionnalités
 
-- Marketing landing page (`/`) with animated Terminal element
-- Pricing page (`/pricing`) which connects to Stripe Checkout
-- Dashboard pages with CRUD operations on users/teams
-- Basic RBAC with Owner and Member roles
-- Subscription management with Stripe Customer Portal
-- Email/password authentication with JWTs stored to cookies
-- Global middleware to protect logged-in routes
-- Local middleware to protect Server Actions or validate Zod schemas
-- Activity logging system for any user events
+- Page d'accueil marketing (`/`) avec élément Terminal animé
+- Page de tarification (`/pricing`) qui se connecte à Stripe Checkout
+- Pages de tableau de bord avec opérations CRUD sur les utilisateurs/équipes
+- RBAC de base avec rôles Propriétaire et Membre
+- Gestion des abonnements avec le Portail Client Stripe
+- Authentification email/mot de passe avec JWTs stockés dans les cookies
+- Middleware global pour protéger les routes connectées
+- Middleware local pour protéger les Server Actions ou valider les schémas Zod
+- Système de journalisation d'activité pour tous les événements utilisateur
 
-## Tech Stack
+## Stack Technologique
 
-- **Framework**: [Next.js](https://nextjs.org/)
-- **Database**: [Postgres](https://www.postgresql.org/)
-- **ORM**: [Drizzle](https://orm.drizzle.team/)
-- **Payments**: [Stripe](https://stripe.com/)
-- **UI Library**: [shadcn/ui](https://ui.shadcn.com/)
+- **Framework** : [Next.js](https://nextjs.org/)
+- **Base de données** : [Postgres](https://www.postgresql.org/)
+- **ORM** : [Drizzle](https://orm.drizzle.team/)
+- **Paiements** : [Stripe](https://stripe.com/)
+- **Bibliothèque UI** : [shadcn/ui](https://ui.shadcn.com/)
 
-## Getting Started
+## Démarrage
 
 ```bash
 git clone https://github.com/nextjs/saas-starter
@@ -32,85 +32,85 @@ cd saas-starter
 pnpm install
 ```
 
-## Running Locally
+## Exécution Locale
 
-[Install](https://docs.stripe.com/stripe-cli) and log in to your Stripe account:
+[Installez](https://docs.stripe.com/stripe-cli) et connectez-vous à votre compte Stripe :
 
 ```bash
 stripe login
 ```
 
-Use the included setup script to create your `.env` file:
+Utilisez le script de configuration inclus pour créer votre fichier `.env` :
 
 ```bash
 pnpm db:setup
 ```
 
-Run the database migrations and seed the database with a default user and team:
+Exécutez les migrations de base de données et initialisez la base de données avec un utilisateur et une équipe par défaut :
 
 ```bash
 pnpm db:migrate
 pnpm db:seed
 ```
 
-This will create the following user and team:
+Cela créera l'utilisateur et l'équipe suivants :
 
-- User: `test@test.com`
-- Password: `admin123`
+- Utilisateur : `test@test.com`
+- Mot de passe : `admin123`
 
-You can also create new users through the `/sign-up` route.
+Vous pouvez également créer de nouveaux utilisateurs via la route `/sign-up`.
 
-Finally, run the Next.js development server:
+Enfin, exécutez le serveur de développement Next.js :
 
 ```bash
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser to see the app in action.
+Ouvrez [http://localhost:3000](http://localhost:3000) dans votre navigateur pour voir l'application en action.
 
-You can listen for Stripe webhooks locally through their CLI to handle subscription change events:
+Vous pouvez écouter les webhooks Stripe localement via leur CLI pour gérer les événements de changement d'abonnement :
 
 ```bash
 stripe listen --forward-to localhost:3000/api/stripe/webhook
 ```
 
-## Testing Payments
+## Test des Paiements
 
-To test Stripe payments, use the following test card details:
+Pour tester les paiements Stripe, utilisez les détails de carte de test suivants :
 
-- Card Number: `4242 4242 4242 4242`
-- Expiration: Any future date
-- CVC: Any 3-digit number
+- Numéro de carte : `4242 4242 4242 4242`
+- Expiration : N'importe quelle date future
+- CVC : N'importe quel nombre à 3 chiffres
 
-## Going to Production
+## Passage en Production
 
-When you're ready to deploy your SaaS application to production, follow these steps:
+Quand vous êtes prêt à déployer votre application SaaS en production, suivez ces étapes :
 
-### Set up a production Stripe webhook
+### Configuration d'un webhook Stripe de production
 
-1. Go to the Stripe Dashboard and create a new webhook for your production environment.
-2. Set the endpoint URL to your production API route (e.g., `https://yourdomain.com/api/stripe/webhook`).
-3. Select the events you want to listen for (e.g., `checkout.session.completed`, `customer.subscription.updated`).
+1. Allez dans le Tableau de bord Stripe et créez un nouveau webhook pour votre environnement de production.
+2. Définissez l'URL du point de terminaison vers votre route API de production (ex. `https://yourdomain.com/api/stripe/webhook`).
+3. Sélectionnez les événements que vous voulez écouter (ex. `checkout.session.completed`, `customer.subscription.updated`).
 
-### Deploy to Vercel
+### Déploiement sur Vercel
 
-1. Push your code to a GitHub repository.
-2. Connect your repository to [Vercel](https://vercel.com/) and deploy it.
-3. Follow the Vercel deployment process, which will guide you through setting up your project.
+1. Poussez votre code vers un dépôt GitHub.
+2. Connectez votre dépôt à [Vercel](https://vercel.com/) et déployez-le.
+3. Suivez le processus de déploiement Vercel, qui vous guidera dans la configuration de votre projet.
 
-### Add environment variables
+### Ajout des variables d'environnement
 
-In your Vercel project settings (or during deployment), add all the necessary environment variables. Make sure to update the values for the production environment, including:
+Dans les paramètres de votre projet Vercel (ou pendant le déploiement), ajoutez toutes les variables d'environnement nécessaires. Assurez-vous de mettre à jour les valeurs pour l'environnement de production, y compris :
 
-1. `BASE_URL`: Set this to your production domain.
-2. `STRIPE_SECRET_KEY`: Use your Stripe secret key for the production environment.
-3. `STRIPE_WEBHOOK_SECRET`: Use the webhook secret from the production webhook you created in step 1.
-4. `POSTGRES_URL`: Set this to your production database URL.
-5. `AUTH_SECRET`: Set this to a random string. `openssl rand -base64 32` will generate one.
+1. `BASE_URL` : Définissez ceci vers votre domaine de production.
+2. `STRIPE_SECRET_KEY` : Utilisez votre clé secrète Stripe pour l'environnement de production.
+3. `STRIPE_WEBHOOK_SECRET` : Utilisez le secret du webhook du webhook de production que vous avez créé à l'étape 1.
+4. `POSTGRES_URL` : Définissez ceci vers l'URL de votre base de données de production.
+5. `AUTH_SECRET` : Définissez ceci comme une chaîne aléatoire. `openssl rand -base64 32` en générera une.
 
-## Other Templates
+## Autres Modèles
 
-While this template is intentionally minimal and to be used as a learning resource, there are other paid versions in the community which are more full-featured:
+Bien que ce modèle soit intentionnellement minimal et destiné à être utilisé comme ressource d'apprentissage, il existe d'autres versions payantes dans la communauté qui sont plus complètes :
 
 - https://achromatic.dev
 - https://shipfa.st
