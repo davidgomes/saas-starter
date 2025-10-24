@@ -1,5 +1,6 @@
 import Stripe from 'stripe';
 import { redirect } from 'next/navigation';
+import { headers } from 'next/headers';
 import { Team } from '@/lib/db/schema';
 import {
   getTeamByStripeCustomerId,
@@ -10,6 +11,21 @@ import {
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2025-04-30.basil'
 });
+
+async function getBaseUrl(): Promise<string> {
+  // In development, use the host header to dynamically detect the port
+  if (process.env.NODE_ENV === 'development') {
+    const headersList = await headers();
+    const host = headersList.get('host');
+    if (host) {
+      const protocol = host.includes('localhost') ? 'http' : 'https';
+      return `${protocol}://${host}`;
+    }
+  }
+  
+  // In production, use the BASE_URL env variable
+  return process.env.BASE_URL || 'http://localhost:3000';
+}
 
 export async function createCheckoutSession({
   team,
@@ -24,6 +40,7 @@ export async function createCheckoutSession({
     redirect(`/sign-up?redirect=checkout&priceId=${priceId}`);
   }
 
+  const baseUrl = await getBaseUrl();
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ['card'],
     line_items: [
@@ -33,8 +50,8 @@ export async function createCheckoutSession({
       }
     ],
     mode: 'subscription',
-    success_url: `${process.env.BASE_URL}/api/stripe/checkout?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${process.env.BASE_URL}/pricing`,
+    success_url: `${baseUrl}/api/stripe/checkout?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${baseUrl}/pricing`,
     customer: team.stripeCustomerId || undefined,
     client_reference_id: user.id.toString(),
     allow_promotion_codes: true,
@@ -107,9 +124,10 @@ export async function createCustomerPortalSession(team: Team) {
     });
   }
 
+  const baseUrl = await getBaseUrl();
   return stripe.billingPortal.sessions.create({
     customer: team.stripeCustomerId,
-    return_url: `${process.env.BASE_URL}/dashboard`,
+    return_url: `${baseUrl}/dashboard`,
     configuration: configuration.id
   });
 }

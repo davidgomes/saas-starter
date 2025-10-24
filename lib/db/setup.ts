@@ -199,6 +199,8 @@ async function main() {
   const POSTGRES_URL = await getPostgresURL();
   const STRIPE_SECRET_KEY = await getStripeSecretKey();
   const STRIPE_WEBHOOK_SECRET = await createStripeWebhook();
+  // BASE_URL is optional in development - the app will auto-detect the port
+  // Set this in production to your actual domain
   const BASE_URL = 'http://localhost:3000';
   const AUTH_SECRET = generateAuthSecret();
 
@@ -211,6 +213,9 @@ async function main() {
   });
 
   console.log('🎉 Setup completed successfully!');
+  console.log('\nNote: BASE_URL is set to localhost:3000 by default.');
+  console.log('If your dev server runs on a different port, the app will automatically detect it.');
+  console.log('Remember to set BASE_URL to your production domain when deploying.');
 }
 
 main().catch(console.error);
