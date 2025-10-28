@@ -77,7 +77,21 @@
 
 @layer utilities {
   body {
-    font-family: "Manrope", Arial, Helvetica, sans-serif;
+    font-family: var(--font-manrope), "Manrope", Arial, Helvetica, sans-serif;
+  }
+  
+  /* Smooth transitions for theme changes */
+  * {
+    transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, color 0.2s ease-in-out;
+  }
+  
+  /* Prevent flash of unstyled content */
+  .dark {
+    color-scheme: dark;
+  }
+  
+  .light {
+    color-scheme: light;
   }
 }
 
