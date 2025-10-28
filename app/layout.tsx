@@ -1,43 +1,41 @@
 import './globals.css';
 import type { Metadata, Viewport } from 'next';
-import { Manrope } from 'next/font/google';
+import { manrope } from '@/lib/utils/font';
+import { metadata as siteMetadata, viewport as siteViewport } from '@/lib/utils/metadata';
+import { SWRProvider } from '@/components/providers/swr-provider';
 import { getUser, getTeamForUser } from '@/lib/db/queries';
-import { SWRConfig } from 'swr';
 
-export const metadata: Metadata = {
-  title: 'Next.js SaaS Starter',
-  description: 'Get started quickly with Next.js, Postgres, and Stripe.'
-};
+export const metadata: Metadata = siteMetadata;
+export const viewport: Viewport = siteViewport;
 
-export const viewport: Viewport = {
-  maximumScale: 1
-};
+const HTML_CLASS_NAME = `bg-white dark:bg-gray-950 text-black dark:text-white`;
+const BODY_CLASS_NAME = `min-h-[100dvh] bg-gray-50`;
 
-const manrope = Manrope({ subsets: ['latin'] });
-
-export default function RootLayout({
-  children
-}: {
+interface RootLayoutProps {
   children: React.ReactNode;
-}) {
+}
+
+/**
+ * Root layout component for the entire application
+ * Configures:
+ * - Global styles and fonts
+ * - Dark mode support
+ * - SWR configuration for data fetching
+ */
+export default async function RootLayout({ children }: RootLayoutProps) {
+  // Fetch initial data for SWR fallback
+  // These promises are resolved server-side before rendering
+  const swrFallback = {
+    '/api/user': getUser(),
+    '/api/team': getTeamForUser()
+  };
+
   return (
-    <html
-      lang="en"
-      className={`bg-white dark:bg-gray-950 text-black dark:text-white ${manrope.className}`}
-    >
-      <body className="min-h-[100dvh] bg-gray-50">
-        <SWRConfig
-          value={{
-            fallback: {
-              // We do NOT await here
-              // Only components that read this data will suspend
-              '/api/user': getUser(),
-              '/api/team': getTeamForUser()
-            }
-          }}
-        >
+    <html lang="en" className={`${HTML_CLASS_NAME} ${manrope.className}`}>
+      <body className={BODY_CLASS_NAME}>
+        <SWRProvider fallback={swrFallback}>
           {children}
-        </SWRConfig>
+        </SWRProvider>
       </body>
     </html>
   );
