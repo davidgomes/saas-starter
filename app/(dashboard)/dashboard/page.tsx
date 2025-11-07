@@ -269,9 +269,32 @@ function InviteTeamMember() {
   );
 }
 
+function HelloGreeting() {
+  const { data: user } = useSWR<User>('/api/user', fetcher);
+  
+  if (!user) {
+    return null;
+  }
+
+  const displayName = user.name || user.email || 'there';
+  const firstName = displayName.split(' ')[0];
+
+  return (
+    <div className="mb-6">
+      <h2 className="text-xl lg:text-3xl font-semibold text-gray-900">
+        Hello, {firstName}! 👋
+      </h2>
+      <p className="text-sm lg:text-base text-muted-foreground mt-1">
+        Welcome back to your dashboard.
+      </p>
+    </div>
+  );
+}
+
 export default function SettingsPage() {
   return (
     <section className="flex-1 p-4 lg:p-8">
+      <HelloGreeting />
       <h1 className="text-lg lg:text-2xl font-medium mb-6">Team Settings</h1>
       <Suspense fallback={<SubscriptionSkeleton />}>
         <ManageSubscription />
