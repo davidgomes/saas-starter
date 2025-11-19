@@ -3,10 +3,10 @@ import type { NextRequest } from 'next/server';
 import { signToken, verifyToken } from '@/lib/auth/session';
 
 // Constants
-const PROTECTED_ROUTES = ['/dashboard'];
+const PROTECTED_ROUTES = ['/dashboard'] as const;
 const SESSION_COOKIE_NAME = 'session';
 const SIGN_IN_PATH = '/sign-in';
-const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
+const SESSION_DURATION_MS = 24 * 60 * 60 * 1000; // 1 day
 
 // Cookie configuration
 const SESSION_COOKIE_OPTIONS = {
@@ -26,29 +26,31 @@ function isProtectedRoute(pathname: string): boolean {
  * Creates a redirect response to the sign-in page
  */
 function createSignInRedirect(request: NextRequest): NextResponse {
-  return NextResponse.redirect(new URL(SIGN_IN_PATH, request.url));
+  const signInUrl = new URL(SIGN_IN_PATH, request.url);
+  return NextResponse.redirect(signInUrl);
 }
 
 /**
  * Calculates the expiration date for a session (1 day from now)
  */
 function getSessionExpirationDate(): Date {
-  return new Date(Date.now() + MILLISECONDS_PER_DAY);
+  return new Date(Date.now() + SESSION_DURATION_MS);
 }
 
 /**
- * Refreshes the session cookie by verifying and re-signing the token
+ * Refreshes the session cookie by verifying and re-signing the token.
+ * Returns true if the session was successfully refreshed, false otherwise.
  */
 async function refreshSession(
-  sessionCookieValue: string,
+  sessionToken: string,
   response: NextResponse
-): Promise<{ success: boolean; shouldRedirect: boolean }> {
+): Promise<boolean> {
   try {
-    const parsed = await verifyToken(sessionCookieValue);
+    const sessionData = await verifyToken(sessionToken);
     const expiresAt = getSessionExpirationDate();
 
     const newToken = await signToken({
-      ...parsed,
+      ...sessionData,
       expires: expiresAt.toISOString(),
     });
 
@@ -59,11 +61,11 @@ async function refreshSession(
       expires: expiresAt,
     });
 
-    return { success: true, shouldRedirect: false };
+    return true;
   } catch (error) {
-    console.error('Error refreshing session:', error);
+    console.error('Failed to refresh session:', error);
     response.cookies.delete(SESSION_COOKIE_NAME);
-    return { success: false, shouldRedirect: true };
+    return false;
   }
 }
 
@@ -73,10 +75,10 @@ async function refreshSession(
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const sessionCookie = request.cookies.get(SESSION_COOKIE_NAME);
-  const requiresAuth = isProtectedRoute(pathname);
+  const isProtected = isProtectedRoute(pathname);
 
   // Redirect to sign-in if accessing protected route without session
-  if (requiresAuth && !sessionCookie) {
+  if (isProtected && !sessionCookie) {
     return createSignInRedirect(request);
   }
 
@@ -84,12 +86,13 @@ export async function middleware(request: NextRequest) {
 
   // Refresh session on GET requests if session exists
   if (sessionCookie && request.method === 'GET') {
-    const { shouldRedirect } = await refreshSession(
+    const refreshSuccessful = await refreshSession(
       sessionCookie.value,
       response
     );
 
-    if (shouldRedirect && requiresAuth) {
+    // If refresh failed and we're on a protected route, redirect to sign-in
+    if (!refreshSuccessful && isProtected) {
       return createSignInRedirect(request);
     }
   }
