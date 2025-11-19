@@ -2,48 +2,94 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { signToken, verifyToken } from '@/lib/auth/session';
 
-const protectedRoutes = '/dashboard';
+// Constants
+const PROTECTED_ROUTES = ['/dashboard'];
+const SIGN_IN_ROUTE = '/sign-in';
+const SESSION_COOKIE_NAME = 'session';
+const SESSION_DURATION_MS = 24 * 60 * 60 * 1000; // 1 day
 
+// Helper functions
+function isProtectedRoute(pathname: string): boolean {
+  return PROTECTED_ROUTES.some(route => pathname.startsWith(route));
+}
+
+function redirectToSignIn(request: NextRequest): NextResponse {
+  return NextResponse.redirect(new URL(SIGN_IN_ROUTE, request.url));
+}
+
+function getSessionExpirationDate(): Date {
+  return new Date(Date.now() + SESSION_DURATION_MS);
+}
+
+async function refreshSession(
+  sessionToken: string,
+  response: NextResponse
+): Promise<void> {
+  const parsed = await verifyToken(sessionToken);
+  const expiresAt = getSessionExpirationDate();
+
+  response.cookies.set({
+    name: SESSION_COOKIE_NAME,
+    value: await signToken({
+      ...parsed,
+      expires: expiresAt.toISOString(),
+    }),
+    httpOnly: true,
+    secure: true,
+    sameSite: 'lax',
+    expires: expiresAt,
+  });
+}
+
+async function handleSessionRefresh(
+  request: NextRequest,
+  response: NextResponse,
+  sessionCookie: string
+): Promise<NextResponse | null> {
+  try {
+    await refreshSession(sessionCookie, response);
+    return null; // Continue with the response
+  } catch (error) {
+    console.error('Error refreshing session:', error);
+    response.cookies.delete(SESSION_COOKIE_NAME);
+    
+    if (isProtectedRoute(request.nextUrl.pathname)) {
+      return redirectToSignIn(request);
+    }
+    
+    return null; // Continue even if refresh failed on non-protected routes
+  }
+}
+
+// Main middleware function
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const sessionCookie = request.cookies.get('session');
-  const isProtectedRoute = pathname.startsWith(protectedRoutes);
+  const sessionCookie = request.cookies.get(SESSION_COOKIE_NAME)?.value;
+  const isProtected = isProtectedRoute(pathname);
 
-  if (isProtectedRoute && !sessionCookie) {
-    return NextResponse.redirect(new URL('/sign-in', request.url));
+  // Redirect to sign-in if accessing protected route without session
+  if (isProtected && !sessionCookie) {
+    return redirectToSignIn(request);
   }
 
-  let res = NextResponse.next();
+  const response = NextResponse.next();
 
+  // Refresh session on GET requests if session exists
   if (sessionCookie && request.method === 'GET') {
-    try {
-      const parsed = await verifyToken(sessionCookie.value);
-      const expiresInOneDay = new Date(Date.now() + 24 * 60 * 60 * 1000);
-
-      res.cookies.set({
-        name: 'session',
-        value: await signToken({
-          ...parsed,
-          expires: expiresInOneDay.toISOString()
-        }),
-        httpOnly: true,
-        secure: true,
-        sameSite: 'lax',
-        expires: expiresInOneDay
-      });
-    } catch (error) {
-      console.error('Error updating session:', error);
-      res.cookies.delete('session');
-      if (isProtectedRoute) {
-        return NextResponse.redirect(new URL('/sign-in', request.url));
-      }
+    const redirectResponse = await handleSessionRefresh(
+      request,
+      response,
+      sessionCookie
+    );
+    if (redirectResponse) {
+      return redirectResponse;
     }
   }
 
-  return res;
+  return response;
 }
 
 export const config = {
   matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
-  runtime: 'nodejs'
+  runtime: 'nodejs',
 };
