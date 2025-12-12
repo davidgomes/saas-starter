@@ -4,10 +4,16 @@ title: Project cursor rules
 model: claude-4.5-opus-high-thinking
 mode: agent
 updatedAt: 1765538440005
-tldr: The user requested to add cursor rules to their project. The next step is
-  to implement these rules.
-overview: The user's intent was to integrate cursor rules into their project.
-  The conversation was a direct request to implement this feature. The next
-  action will be to proceed with adding the specified cursor rules to the
-  project codebase.
+tldr: The user requested to add Cursor rules to their project. The assistant
+  will first check for existing cursor configurations and then create new rules
+  tailored to the Next.js SaaS starter project's structure and conventions.
+overview: The user initiated a request to integrate Cursor rules into their
+  project. The assistant acknowledged the request and outlined a plan to first
+  inspect the project for any pre-existing Cursor configurations. Following
+  this, the assistant intends to formulate new Cursor rules specifically
+  designed to align with the project's identified architecture, which includes a
+  Next.js SaaS starter template featuring an authentication system, Stripe
+  payments integration, Drizzle ORM for database management, and a dashboard
+  with various UI components. The goal is to create rules that effectively guide
+  the AI assistant based on the project's unique patterns and conventions.
 bullets: []
