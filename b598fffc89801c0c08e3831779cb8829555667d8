@@ -8,9 +8,10 @@ tldr: The user requested to add comments to the  file. The
   assistant added descriptive comments to various constants and functions within
   the file to improve code clarity.
 overview: The user wanted to improve the readability of the  file
-  by adding comments. The assistant read the file and then applied a patch to
-  add comments explaining the purpose of key constants and functions related to
-  session management and route protection. A second patch was applied to refine
-  the wording of these comments for better clarity. The outcome is a more
-  well-documented  file.
+  by adding comments. The assistant read the file and then applied two patches.
+  The first patch added initial comments, and the second patch refined these
+  comments to be more precise and descriptive for constants like
+  , , ,
+  , and functions like  and
+  . The outcome is a more well-documented  file.
 bullets: []
