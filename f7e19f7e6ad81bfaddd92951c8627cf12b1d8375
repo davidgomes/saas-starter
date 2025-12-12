@@ -5,20 +5,20 @@ model: claude-4.5-opus-high-thinking
 mode: agent
 updatedAt: 1765538440005
 tldr: The user requested to add Cursor rules to their project. The assistant
-  analyzed the Next.js SaaS starter project and created a detailed set of
-  contextual Cursor rules, organized into specific files for different aspects
-  like project conventions, database, authentication, payments, components, and
-  API routes.
-overview: The user wanted to integrate Cursor rules into their Next.js SaaS
-  starter project. The assistant began by inspecting the project for existing
-  Cursor configurations and then performed a deep dive into key files like
-  , database schema, middleware, and queries to understand the
-  project's unique tech stack and coding patterns. Based on this analysis, the
-  assistant generated a comprehensive set of six Markdown Cursor (MDC) rule
-  files. These rules cover general project conventions, Drizzle ORM database
-  patterns, JWT-based authentication, Stripe payment integration, UI component
-  best practices (including Server vs. Client Components), and API route handler
-  guidelines. Each rule file is configured with specific  to ensure
-  contextual application, providing relevant guidance without overwhelming the
-  user.
+  analyzed the project structure and tech stack, then created a structured set
+  of 6 Markdown Cursor (MDC) rule files within a  directory to
+  guide the AI assistant on project conventions, database, authentication,
+  payments, components, and API routes.
+overview: The user wanted to add Cursor rules to their Next.js SaaS starter
+  project. The assistant began by checking for existing Cursor configurations
+  and then performed a detailed analysis of the project's tech stack and
+  conventions by reading key files like , database schema, and
+  middleware. Based on this, the assistant decided to create a well-organized
+  set of rules. It implemented this by creating a  directory and
+  populating it with six distinct Markdown Cursor (MDC) files. These files
+  provide comprehensive guidance on general project conventions, Drizzle ORM
+  database patterns, JWT authentication, Stripe payment integration, UI
+  component patterns, and API route handler best practices. This structured
+  approach ensures that the AI assistant has clear guidelines for working with
+  different parts of the codebase.
 bullets: []
