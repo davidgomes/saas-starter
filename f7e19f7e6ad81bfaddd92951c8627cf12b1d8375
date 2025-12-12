@@ -5,15 +5,20 @@ model: claude-4.5-opus-high-thinking
 mode: agent
 updatedAt: 1765538440005
 tldr: The user requested to add Cursor rules to their project. The assistant
-  identified the project as a Next.js SaaS starter, checked for existing
-  configurations, and is now gathering information from key project files to
-  create appropriate AI guidance rules.
-overview: The user wanted to add Cursor rules to their project to guide the AI
-  assistant. The assistant recognized the project as a Next.js SaaS starter and
-  began by checking for any existing Cursor configurations. Finding only a
-   file, it proceeded to read key project files like
-  , , , and
-  to understand the project's tech stack and conventions. The next step is to
-  create the actual  or  file based on this
-  gathered information.
+  analyzed the Next.js SaaS starter project and created a detailed set of
+  contextual Cursor rules, organized into specific files for different aspects
+  like project conventions, database, authentication, payments, components, and
+  API routes.
+overview: The user wanted to integrate Cursor rules into their Next.js SaaS
+  starter project. The assistant began by inspecting the project for existing
+  Cursor configurations and then performed a deep dive into key files like
+  , database schema, middleware, and queries to understand the
+  project's unique tech stack and coding patterns. Based on this analysis, the
+  assistant generated a comprehensive set of six Markdown Cursor (MDC) rule
+  files. These rules cover general project conventions, Drizzle ORM database
+  patterns, JWT-based authentication, Stripe payment integration, UI component
+  best practices (including Server vs. Client Components), and API route handler
+  guidelines. Each rule file is configured with specific  to ensure
+  contextual application, providing relevant guidance without overwhelming the
+  user.
 bullets: []
