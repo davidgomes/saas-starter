@@ -1,0 +1,13 @@
+version: 1
+conversationId: 1d0dc153-a50b-404b-86c3-b54778f2622a
+title: null
+model: claude-4.5-opus-high-thinking
+mode: agent
+updatedAt: 1765538440005
+tldr: The user requested to add cursor rules to their project. The next step is
+  to implement these rules.
+overview: The user's intent was to integrate cursor rules into their project.
+  The conversation was a direct request to implement this feature. The next
+  action will be to proceed with adding the specified cursor rules to the
+  project codebase.
+bullets: []
