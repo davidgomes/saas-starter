@@ -1,0 +1,98 @@
+---
+description: Database and Drizzle ORM patterns for this project
+globs: lib/db/**/*.ts
+alwaysApply: false
+---
+
+# Database Conventions (Drizzle ORM)
+
+## Schema Definitions
+
+All schema definitions live in `lib/db/schema.ts`. Follow these patterns:
+
+```typescript
+// Table definition with proper column types
+export const users = pgTable('users', {
+  id: serial('id').primaryKey(),
+  name: varchar('name', { length: 100 }),
+  email: varchar('email', { length: 255 }).notNull().unique(),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
+// Always define relations separately
+export const usersRelations = relations(users, ({ many }) => ({
+  teamMembers: many(teamMembers),
+}));
+
+// Export inferred types for type safety
+export type User = typeof users.$inferSelect;
+export type NewUser = typeof users.$inferInsert;
+```
+
+## Query Patterns
+
+Use the query builder in `lib/db/queries.ts`:
+
+```typescript
+// ✅ GOOD - Type-safe Drizzle queries
+const user = await db
+  .select()
+  .from(users)
+  .where(and(eq(users.id, userId), isNull(users.deletedAt)))
+  .limit(1);
+
+// ✅ GOOD - Using relational queries
+const result = await db.query.teamMembers.findFirst({
+  where: eq(teamMembers.userId, user.id),
+  with: {
+    team: {
+      with: {
+        teamMembers: true
+      }
+    }
+  }
+});
+
+// ❌ BAD - Raw SQL without parameterization
+await db.execute(`SELECT * FROM users WHERE id = ${userId}`);
+```
+
+## Session-Aware Queries
+
+For authenticated queries, always verify the session first:
+
+```typescript
+export async function getActivityLogs() {
+  const user = await getUser();
+  if (!user) {
+    throw new Error('User not authenticated');
+  }
+  
+  return await db
+    .select()
+    .from(activityLogs)
+    .where(eq(activityLogs.userId, user.id));
+}
+```
+
+## Migrations
+
+1. Make schema changes in `lib/db/schema.ts`
+2. Generate migration: `pnpm db:generate`
+3. Review the generated SQL in `lib/db/migrations/`
+4. Apply migration: `pnpm db:migrate`
+
+Never manually edit migration files after they've been applied.
+
+## Soft Deletes
+
+Use `deletedAt` timestamp pattern for soft deletes:
+
+```typescript
+// Filtering out deleted records
+.where(isNull(users.deletedAt))
+
+// Soft delete
+.set({ deletedAt: new Date() })
+```

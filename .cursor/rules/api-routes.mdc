@@ -1,0 +1,116 @@
+---
+description: API route handler patterns
+globs: app/api/**/*.ts
+alwaysApply: false
+---
+
+# API Route Patterns
+
+## Route Handler Structure
+
+API routes live in `app/api/` and export HTTP method handlers:
+
+```typescript
+import { NextRequest, NextResponse } from 'next/server';
+
+export async function GET(request: NextRequest) {
+  // Handle GET request
+  return NextResponse.json({ data: 'value' });
+}
+
+export async function POST(request: NextRequest) {
+  const body = await request.json();
+  // Handle POST request
+  return NextResponse.json({ success: true });
+}
+```
+
+## Authentication in API Routes
+
+Always verify authentication for protected endpoints:
+
+```typescript
+import { getUser } from '@/lib/db/queries';
+
+export async function GET() {
+  const user = await getUser();
+  
+  if (!user) {
+    return NextResponse.json(
+      { error: 'Unauthorized' },
+      { status: 401 }
+    );
+  }
+  
+  // Proceed with authenticated logic
+}
+```
+
+## Request Validation with Zod
+
+Validate incoming data using Zod schemas:
+
+```typescript
+import { z } from 'zod';
+
+const updateUserSchema = z.object({
+  name: z.string().min(1).max(100),
+  email: z.string().email(),
+});
+
+export async function PUT(request: NextRequest) {
+  const body = await request.json();
+  
+  const result = updateUserSchema.safeParse(body);
+  if (!result.success) {
+    return NextResponse.json(
+      { error: 'Invalid input', details: result.error.flatten() },
+      { status: 400 }
+    );
+  }
+  
+  // Use result.data (typed and validated)
+}
+```
+
+## Error Handling
+
+Return appropriate HTTP status codes:
+
+```typescript
+// 400 - Bad Request (validation errors)
+return NextResponse.json({ error: 'Invalid input' }, { status: 400 });
+
+// 401 - Unauthorized (not logged in)
+return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+// 403 - Forbidden (logged in but not allowed)
+return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+
+// 404 - Not Found
+return NextResponse.json({ error: 'Not found' }, { status: 404 });
+
+// 500 - Internal Server Error
+return NextResponse.json({ error: 'Internal error' }, { status: 500 });
+```
+
+## SWR Integration
+
+API routes are designed to work with SWR on the client:
+
+```typescript
+// Client component
+'use client';
+import useSWR from 'swr';
+
+const fetcher = (url: string) => fetch(url).then(r => r.json());
+
+export function UserProfile() {
+  const { data, error, isLoading } = useSWR('/api/user', fetcher);
+  
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error loading user</div>;
+  
+  return <div>{data.name}</div>;
+}
+```

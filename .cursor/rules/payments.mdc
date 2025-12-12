@@ -1,0 +1,82 @@
+---
+description: Stripe payment integration patterns
+globs: 
+  - lib/payments/**/*.ts
+  - app/api/stripe/**/*.ts
+alwaysApply: false
+---
+
+# Stripe Payment Patterns
+
+## Architecture Overview
+
+- `lib/payments/stripe.ts` - Stripe client initialization and helpers
+- `lib/payments/actions.ts` - Server actions for checkout/portal
+- `app/api/stripe/webhook/route.ts` - Webhook handler for Stripe events
+- `app/api/stripe/checkout/route.ts` - Checkout session creation
+
+## Stripe Customer Mapping
+
+Teams are linked to Stripe via `stripeCustomerId`:
+
+```typescript
+// Schema fields on teams table
+stripeCustomerId: text('stripe_customer_id').unique(),
+stripeSubscriptionId: text('stripe_subscription_id').unique(),
+stripeProductId: text('stripe_product_id'),
+planName: varchar('plan_name', { length: 50 }),
+subscriptionStatus: varchar('subscription_status', { length: 20 }),
+```
+
+## Webhook Handling
+
+Webhooks must be idempotent. Always:
+
+1. Verify the webhook signature
+2. Look up the team by `stripeCustomerId`
+3. Update subscription state atomically
+
+```typescript
+// Pattern for webhook handlers
+export async function POST(request: Request) {
+  const body = await request.text();
+  const signature = request.headers.get('stripe-signature')!;
+  
+  const event = stripe.webhooks.constructEvent(
+    body,
+    signature,
+    process.env.STRIPE_WEBHOOK_SECRET!
+  );
+  
+  switch (event.type) {
+    case 'customer.subscription.updated':
+      // Handle subscription update
+      break;
+  }
+}
+```
+
+## Checkout Flow
+
+1. User clicks pricing plan
+2. Server action creates Stripe Checkout Session
+3. User redirects to Stripe-hosted checkout
+4. Webhook receives `checkout.session.completed`
+5. Update team subscription status in database
+
+## Environment Variables Required
+
+```
+STRIPE_SECRET_KEY=sk_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_...
+BASE_URL=http://localhost:3000
+```
+
+## Testing Webhooks Locally
+
+Use Stripe CLI to forward webhooks:
+
+```bash
+stripe listen --forward-to localhost:3000/api/stripe/webhook
+```

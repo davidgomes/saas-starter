@@ -1,0 +1,85 @@
+---
+description: Authentication and session management patterns
+globs: 
+  - lib/auth/**/*.ts
+  - middleware.ts
+  - app/(login)/**/*.{ts,tsx}
+alwaysApply: false
+---
+
+# Authentication Patterns
+
+## Session Management
+
+This project uses JWT sessions with the `jose` library, stored in HTTP-only cookies.
+
+### Session Structure
+
+```typescript
+interface SessionPayload {
+  user: {
+    id: number;
+  };
+  expires: string; // ISO date string
+}
+```
+
+### Key Files
+
+- `lib/auth/session.ts` - JWT sign/verify utilities
+- `middleware.ts` - Route protection and session refresh
+- `lib/db/queries.ts` - `getUser()` for server-side auth checks
+
+## Middleware Pattern
+
+The middleware handles:
+1. **Route protection**: Redirects unauthenticated users from `/dashboard/*` to `/sign-in`
+2. **Session refresh**: Extends session expiry on each GET request
+3. **Cookie security**: Sets `httpOnly`, `secure`, `sameSite: 'lax'`
+
+```typescript
+// Protected routes check
+const isProtectedRoute = pathname.startsWith('/dashboard');
+if (isProtectedRoute && !sessionCookie) {
+  return NextResponse.redirect(new URL('/sign-in', request.url));
+}
+```
+
+## Server-Side Auth Checks
+
+Always use `getUser()` from queries for server-side authentication:
+
+```typescript
+import { getUser } from '@/lib/db/queries';
+
+export default async function ProtectedPage() {
+  const user = await getUser();
+  if (!user) {
+    redirect('/sign-in');
+  }
+  // ... render page
+}
+```
+
+## Password Handling
+
+- Use `bcryptjs` for password hashing
+- Never store plaintext passwords
+- The `passwordHash` field in the users table stores the bcrypt hash
+
+```typescript
+import bcrypt from 'bcryptjs';
+
+// Hashing
+const passwordHash = await bcrypt.hash(password, 10);
+
+// Verification
+const isValid = await bcrypt.compare(password, user.passwordHash);
+```
+
+## Security Considerations
+
+1. **Never expose session tokens to client-side JavaScript**
+2. **Always validate session expiry** before trusting session data
+3. **Check `deletedAt` is null** when fetching users
+4. **Log security-relevant actions** using `ActivityType` enum

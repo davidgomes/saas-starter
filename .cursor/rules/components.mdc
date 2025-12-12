@@ -1,0 +1,118 @@
+---
+description: UI component patterns and styling conventions
+globs: 
+  - components/**/*.tsx
+  - app/**/*.tsx
+alwaysApply: false
+---
+
+# Component Patterns
+
+## UI Components
+
+Components in `components/ui/` follow shadcn/ui conventions:
+
+- Built on Radix UI primitives
+- Styled with Tailwind CSS
+- Use `class-variance-authority` (CVA) for variants
+- Use `clsx` and `tailwind-merge` via `cn()` utility
+
+### The `cn()` Utility
+
+```typescript
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+```
+
+### Component Structure
+
+```typescript
+import * as React from 'react';
+import { cn } from '@/lib/utils';
+
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: 'default' | 'destructive' | 'outline';
+}
+
+export function Button({ className, variant = 'default', ...props }: ButtonProps) {
+  return (
+    <button
+      className={cn(
+        'inline-flex items-center justify-center rounded-md',
+        variant === 'destructive' && 'bg-red-500 text-white',
+        className
+      )}
+      {...props}
+    />
+  );
+}
+```
+
+## Server vs Client Components
+
+### Default to Server Components
+
+```typescript
+// No directive needed - this is a Server Component
+export default async function DashboardPage() {
+  const user = await getUser();
+  return <div>Welcome {user?.name}</div>;
+}
+```
+
+### Use Client Components When Needed
+
+```typescript
+'use client';
+
+import { useState } from 'react';
+
+export function Counter() {
+  const [count, setCount] = useState(0);
+  return <button onClick={() => setCount(c => c + 1)}>{count}</button>;
+}
+```
+
+## Form Patterns
+
+Use Server Actions for form submissions:
+
+```typescript
+// In a Server Component or separate actions.ts file
+async function handleSubmit(formData: FormData) {
+  'use server';
+  const email = formData.get('email');
+  // Process form...
+}
+
+// In the component
+<form action={handleSubmit}>
+  <input name="email" type="email" />
+  <button type="submit">Submit</button>
+</form>
+```
+
+## Loading States
+
+Colocate `loading.tsx` with pages for automatic Suspense boundaries:
+
+```
+app/
+  dashboard/
+    page.tsx
+    loading.tsx  ← Shows while page.tsx loads
+```
+
+## Icons
+
+Use `lucide-react` for icons:
+
+```typescript
+import { Settings, User, LogOut } from 'lucide-react';
+
+<Settings className="h-4 w-4" />
+```

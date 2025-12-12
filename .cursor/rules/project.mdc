@@ -1,0 +1,65 @@
+---
+description: General project conventions and tech stack guidelines for this Next.js SaaS starter
+globs: **/*.{ts,tsx,js,jsx}
+alwaysApply: false
+---
+
+# Project Conventions
+
+## Tech Stack
+
+- **Framework**: Next.js 15 with App Router and Turbopack
+- **Language**: TypeScript (strict mode)
+- **Database**: PostgreSQL with Drizzle ORM
+- **Auth**: Custom JWT sessions using `jose`
+- **Payments**: Stripe
+- **Styling**: Tailwind CSS 4 with `tw-animate-css`
+- **Components**: Radix UI primitives via `radix-ui`
+- **Data Fetching**: SWR for client-side, Server Components for SSR
+- **Validation**: Zod
+
+## File Organization
+
+- `app/` - Next.js App Router pages and layouts
+  - `(dashboard)/` - Protected dashboard routes (route group)
+  - `(login)/` - Authentication routes (route group)
+  - `api/` - API route handlers
+- `components/ui/` - Reusable UI components (shadcn/ui style)
+- `lib/` - Core business logic
+  - `lib/auth/` - Authentication utilities
+  - `lib/db/` - Database schema, queries, migrations
+  - `lib/payments/` - Stripe integration
+
+## Import Conventions
+
+Use the `@/` path alias for imports from the project root:
+
+```typescript
+// ✅ GOOD
+import { getUser } from '@/lib/db/queries';
+import { Button } from '@/components/ui/button';
+
+// ❌ BAD
+import { getUser } from '../../../lib/db/queries';
+```
+
+## Component Patterns
+
+- Use Server Components by default
+- Add `'use client'` directive only when needed (interactivity, hooks)
+- Colocate loading states with pages (`loading.tsx`)
+- Use `server-only` package for server-exclusive code
+
+## Environment Variables
+
+- Never commit `.env` files
+- Use `.env.example` as template
+- Access via `process.env` on server, never expose to client unless prefixed with `NEXT_PUBLIC_`
+
+## Scripts
+
+- `pnpm dev` - Start development server with Turbopack
+- `pnpm db:generate` - Generate Drizzle migrations
+- `pnpm db:migrate` - Run migrations
+- `pnpm db:studio` - Open Drizzle Studio
+- `pnpm db:seed` - Seed database with test data
