@@ -4,18 +4,16 @@ title: Project cursor rules
 model: claude-4.5-opus-high-thinking
 mode: agent
 updatedAt: 1765538440005
-tldr: I added a comprehensive set of Cursor rules to the Next.js SaaS starter
-  project. These rules cover general project conventions, database patterns,
-  authentication, Stripe payments, UI components, and API routes, providing
-  detailed guidance for the AI assistant.
-overview: The user wanted to add Cursor rules to their Next.js SaaS starter
-  project. I started by checking for existing Cursor configurations and then
-  thoroughly analyzed the project's  and key source files to
-  understand its architecture and conventions. Based on this, I created a
-  structured set of Cursor rules within a  directory. These rules
-  are organized into several Markdown files, each focusing on a specific aspect
-  like general project conventions, Drizzle ORM, authentication, Stripe
-  integration, UI components, and API routes. The rules provide detailed
-  guidance on best practices, common patterns, and technical specifics, ensuring
-  the AI assistant has a comprehensive understanding of the codebase.
+tldr: The user requested to add Cursor rules to their project. The assistant
+  identified the project as a Next.js SaaS starter, checked for existing
+  configurations, and is now gathering information from key project files to
+  create appropriate AI guidance rules.
+overview: The user wanted to add Cursor rules to their project to guide the AI
+  assistant. The assistant recognized the project as a Next.js SaaS starter and
+  began by checking for any existing Cursor configurations. Finding only a
+   file, it proceeded to read key project files like
+  , , , and
+  to understand the project's tech stack and conventions. The next step is to
+  create the actual  or  file based on this
+  gathered information.
 bullets: []
