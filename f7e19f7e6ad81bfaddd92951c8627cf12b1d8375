@@ -4,21 +4,18 @@ title: Project cursor rules
 model: claude-4.5-opus-high-thinking
 mode: agent
 updatedAt: 1765538440005
-tldr: The user requested to add Cursor rules to their project. The assistant
-  analyzed the project structure and tech stack, then created a structured set
-  of 6 Markdown Cursor (MDC) rule files within a  directory to
-  guide the AI assistant on project conventions, database, authentication,
-  payments, components, and API routes.
+tldr: I added a comprehensive set of Cursor rules to the Next.js SaaS starter
+  project. These rules cover general project conventions, database patterns,
+  authentication, Stripe payments, UI components, and API routes, providing
+  detailed guidance for the AI assistant.
 overview: The user wanted to add Cursor rules to their Next.js SaaS starter
-  project. The assistant began by checking for existing Cursor configurations
-  and then performed a detailed analysis of the project's tech stack and
-  conventions by reading key files like , database schema, and
-  middleware. Based on this, the assistant decided to create a well-organized
-  set of rules. It implemented this by creating a  directory and
-  populating it with six distinct Markdown Cursor (MDC) files. These files
-  provide comprehensive guidance on general project conventions, Drizzle ORM
-  database patterns, JWT authentication, Stripe payment integration, UI
-  component patterns, and API route handler best practices. This structured
-  approach ensures that the AI assistant has clear guidelines for working with
-  different parts of the codebase.
+  project. I started by checking for existing Cursor configurations and then
+  thoroughly analyzed the project's  and key source files to
+  understand its architecture and conventions. Based on this, I created a
+  structured set of Cursor rules within a  directory. These rules
+  are organized into several Markdown files, each focusing on a specific aspect
+  like general project conventions, Drizzle ORM, authentication, Stripe
+  integration, UI components, and API routes. The rules provide detailed
+  guidance on best practices, common patterns, and technical specifics, ensuring
+  the AI assistant has a comprehensive understanding of the codebase.
 bullets: []
