@@ -1,0 +1,21 @@
+version: 1
+conversationId: 9131e700-9bab-4118-acd7-de6ccfcdbdb3
+title: null
+model: null
+mode: agent
+updatedAt: 1763056636090
+tldr: The user requested a refactor of  and . The
+  assistant successfully refactored both files, extracting constants, creating
+  utility functions, and adding type safety to enhance code organization,
+  readability, and maintainability.
+overview: The user wanted to refactor  and  to
+  improve code quality. The assistant began by reading both files to understand
+  their current structure. It then proposed a series of refactoring tasks,
+  including extracting SWR fallback configuration and adding type interfaces for
+  , and for , extracting session cookie refresh
+  logic, route protection logic, and adding type constants. The assistant then
+  implemented these changes, creating dedicated utility functions and constants
+  in  and a constant for SWR fallback data in .
+  The outcome is a more organized, readable, and maintainable codebase with
+  better type safety and clearer separation of concerns.
+bullets: []
