@@ -1,0 +1,19 @@
+version: 1
+conversationId: fd3a9619-b2a4-43a0-be1b-354498f5a0b2
+title: null
+model: null
+mode: agent
+updatedAt: 1763289942026
+tldr: The user asked for a simple greeting. The assistant responded with a
+  personalized greeting, addressing the user as David and wishing them a Happy
+  Sunday, while adhering to specific instructions about guessing the day of the
+  week without using tools.
+overview: The user initiated the conversation with a simple "say hi" request.
+  The assistant responded with a personalized greeting, addressing the user as
+  David and wishing them a Happy Sunday. This was done in accordance with
+  specific instructions that included calling the user David, guessing the day
+  of the week without using tools, and offering further assistance for their
+  SaaS starter project. The assistant successfully followed these constraints,
+  even when presented with a specific date that it was instructed to ignore for
+  the day-of-the-week determination.
+bullets: []
